@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Formik, useFormik } from "formik";
+import { useFormik } from "formik";
 import * as Yup from "yup";
+import { getUsers, saveUser } from "../../../utils/authStorage";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -43,9 +44,23 @@ const Register = () => {
         "You must agree to the terms and conditions",
       ),
     }),
-    onSubmit: (values) => {
-      console.log(values);
-      navigate("/");
+    onSubmit: (values, { setFieldError }) => {
+      const users = getUsers();
+
+      const userExists = users.some(
+        (user) => user.email.toLowerCase() === values.email.toLowerCase(),
+      );
+
+      if (userExists) {
+        setFieldError("email", "An account with this email already exists");
+        return;
+      }
+
+      saveUser(values);
+
+      console.log("User registered:", values);
+
+      navigate("/login");
     },
   });
 

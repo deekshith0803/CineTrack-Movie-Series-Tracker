@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Navbar from "./components/layout/Navbar/Navbar";
 import Sidebar from "./components/layout/Sidebar/Sidebar";
@@ -16,6 +16,9 @@ import SeriesList from "./components/series/SeriesList/SeriesList";
 import SeriesDetails from "./components/series/SeriesDetails/SeriesDetails";
 import CurrentlyWatching from "./pages/user/CurrentlyWatching/CurrentlyWatching";
 import Completed from "./pages/user/Completed/Completed";
+import { useDispatch } from "react-redux";
+import { getCurrentUser } from "./utils/authStorage";
+import { finishLoading, login } from "./redux/slices/authSlice";
 
 const Layout = ({ children }) => {
   const location = useLocation();
@@ -44,6 +47,16 @@ const Layout = ({ children }) => {
 };
 
 const App = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const currentUser = getCurrentUser();
+    if (currentUser) {
+      dispatch(login(currentUser));
+    } else {
+      dispatch(finishLoading());
+    }
+  }, [dispatch]);
   return (
     <BrowserRouter>
       <Layout>

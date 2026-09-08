@@ -4,12 +4,16 @@ import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
 import { login } from "../../../redux/slices/authSlice";
+import { getUsers, saveCurrentUser } from "../../../utils/authStorage";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  // const auth = useSelector((state) => state.auth);
+  // console.log("Redux auth", auth);
 
   const formik = useFormik({
     initialValues: {
@@ -34,10 +38,20 @@ const Login = () => {
         ),
     }),
 
-    onSubmit: (values) => {
-      dispatch(login(values));
+    onSubmit: (values, { setFieldError }) => {
+      const registeredUser = getUsers().find(
+        (user) =>
+          user.email === formik.values.email &&
+          user.password === formik.values.password,
+      );
+      if (!registeredUser) {
+        setFieldError("password", "Invalid email or password");
+        return;
+      }
+      saveCurrentUser(registeredUser);
+      dispatch(login(registeredUser));
       navigate("/");
-      console.log(values);
+      console.log("User login", values);
     },
   });
 

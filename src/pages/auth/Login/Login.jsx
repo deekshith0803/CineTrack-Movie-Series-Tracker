@@ -1,10 +1,15 @@
 import { useFormik } from "formik";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
+import { login } from "../../../redux/slices/authSlice";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const formik = useFormik({
     initialValues: {
@@ -30,6 +35,8 @@ const Login = () => {
     }),
 
     onSubmit: (values) => {
+      dispatch(login(values));
+      navigate("/");
       console.log(values);
     },
   });

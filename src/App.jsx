@@ -12,6 +12,10 @@ import Profile from "./pages/user/Profile/Profile";
 import MovieList from "./components/movie/MovieList/MovieList";
 import MovieDetails from "./components/movie/MovieDetails/MovieDetails";
 import ProtectedRoute from "./routes/ProtectedRoute";
+import SeriesList from "./components/series/SeriesList/SeriesList";
+import SeriesDetails from "./components/series/SeriesDetails/SeriesDetails";
+import CurrentlyWatching from "./pages/user/CurrentlyWatching/CurrentlyWatching";
+import Completed from "./pages/user/Completed/Completed";
 
 const Layout = ({ children }) => {
   const location = useLocation();
@@ -100,6 +104,39 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <Profile />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/series"
+            element={
+              <ProtectedRoute>
+                <SeriesList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/series/:id"
+            element={
+              <ProtectedRoute>
+                <SeriesDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/currently-watching"
+            element={
+              <ProtectedRoute>
+                <CurrentlyWatching />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/completed"
+            element={
+              <ProtectedRoute>
+                <Completed />
               </ProtectedRoute>
             }
           />

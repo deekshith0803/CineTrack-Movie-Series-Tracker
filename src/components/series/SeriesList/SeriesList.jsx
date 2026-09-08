@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import MovieCard from "../MovieCard/MovieCard";
+import SeriesCard from "../SeriesCard/SeriesCard";
 
-const MovieList = () => {
-  const [movies, setMovies] = useState([]);
+const SeriesList = () => {
+  const [series, setSeries] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -11,51 +11,50 @@ const MovieList = () => {
   const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
   useEffect(() => {
-    const getMovies = async () => {
+    const getSeries = async () => {
       setLoading(true);
 
       try {
         let url;
 
-        // Search entire TMDB database
         if (search.trim()) {
-          url = `https://api.themoviedb.org/3/search/movie?api_key=${API_KEY}&language=en-US&query=${encodeURIComponent(
+          // Search entire TMDB TV database
+          url = `https://api.themoviedb.org/3/search/tv?api_key=${API_KEY}&language=en-US&query=${encodeURIComponent(
             search,
           )}&page=${page}`;
         } else {
-          // Normal movie listing
-          url = `https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&language=en-US&sort_by=popularity.desc&page=${page}`;
+          // Normal popular series
+          url = `https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&language=en-US&sort_by=popularity.desc&page=${page}`;
         }
 
         const response = await fetch(url);
 
         if (!response.ok) {
-          throw new Error("Failed to fetch movies");
+          throw new Error("Failed to fetch series");
         }
 
         const data = await response.json();
 
-        setMovies(data.results || []);
+        setSeries(data.results || []);
         setTotalPages(data.total_pages || 1);
       } catch (error) {
-        console.error("Error fetching movies:", error);
-        setMovies([]);
+        console.error("Error fetching series:", error);
+        setSeries([]);
         setTotalPages(1);
       } finally {
         setLoading(false);
       }
     };
 
-    getMovies();
+    getSeries();
   }, [API_KEY, page, search]);
 
-  // Search handler
+  // Search starts from page 1
   const handleSearch = (e) => {
     setSearch(e.target.value);
     setPage(1);
   };
 
-  // Next page
   const nextPage = () => {
     if (page < totalPages) {
       setPage((prev) => prev + 1);
@@ -63,7 +62,6 @@ const MovieList = () => {
     }
   };
 
-  // Previous page
   const previousPage = () => {
     if (page > 1) {
       setPage((prev) => prev - 1);
@@ -77,19 +75,19 @@ const MovieList = () => {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-8">
           <div>
-            <h1 className="text-3xl sm:text-4xl font-bold">Movies</h1>
+            <h1 className="text-3xl sm:text-4xl font-bold">TV Series</h1>
 
             <p className="text-gray-500 mt-2">
               {search
                 ? `Search results for "${search}"`
-                : "Explore movies and discover something new."}
+                : "Explore series and discover something new."}
             </p>
           </div>
 
           {/* Search */}
           <input
             type="text"
-            placeholder="Search all movies..."
+            placeholder="Search all series..."
             value={search}
             onChange={handleSearch}
             className="w-full sm:w-72 px-4 py-3 rounded-lg bg-gray-900 border border-gray-800 text-white placeholder-gray-500 outline-none focus:border-red-600"
@@ -100,31 +98,31 @@ const MovieList = () => {
         {loading && (
           <div className="flex justify-center py-20">
             <p className="text-gray-500">
-              {search ? "Searching movies..." : "Loading movies..."}
+              {search ? "Searching series..." : "Loading series..."}
             </p>
           </div>
         )}
 
-        {/* Movies */}
-        {!loading && movies.length > 0 && (
+        {/* Series */}
+        {!loading && series.length > 0 && (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-5">
-            {movies.map((movie) => (
-              <MovieCard key={movie.id} movie={movie} />
+            {series.map((item) => (
+              <SeriesCard key={item.id} series={item} />
             ))}
           </div>
         )}
 
         {/* No Results */}
-        {!loading && movies.length === 0 && (
+        {!loading && series.length === 0 && (
           <div className="py-20 text-center">
             <p className="text-gray-500">
-              {search ? `No movies found for "${search}".` : "No movies found."}
+              {search ? `No series found for "${search}".` : "No series found."}
             </p>
           </div>
         )}
 
         {/* Pagination */}
-        {!loading && movies.length > 0 && (
+        {!loading && series.length > 0 && (
           <div className="flex items-center justify-center gap-3 py-10">
             <button
               onClick={previousPage}
@@ -150,4 +148,4 @@ const MovieList = () => {
   );
 };
 
-export default MovieList;
+export default SeriesList;

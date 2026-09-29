@@ -20,15 +20,11 @@ export const saveUser = (newUser) => {
 export const getCurrentUser = () => {
   try {
     return JSON.parse(localStorage.getItem("currentUser")) || null;
-  } catch (error) {}
+  } catch (error) { }
 };
 
 export const saveCurrentUser = (user) => {
-  const currentUser = {
-    name: user.name,
-    email: user.email,
-  };
-  localStorage.setItem("currentUser", JSON.stringify(currentUser));
+  localStorage.setItem("currentUser", JSON.stringify(user));
 };
 
 export const removeCurrentUser = () => {

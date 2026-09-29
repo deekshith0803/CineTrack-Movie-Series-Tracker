@@ -39,26 +39,51 @@ const Login = () => {
     }),
 
     onSubmit: (values, { setFieldError }) => {
-      const registeredUser = getUsers().find(
+      const adminUser = {
+        name: "CineTrack Admin",
+        email: "admin@gmail.com",
+        password: "Admin@123",
+        role: "admin",
+      };
+
+      // Check admin login
+      const isAdmin =
+        values.email.toLowerCase() === adminUser.email.toLowerCase() &&
+        values.password === adminUser.password;
+
+      if (isAdmin) {
+        dispatch(login(adminUser));
+        navigate("/admin/dashboard");
+        return;
+      }
+
+      // Check normal users
+      const users = JSON.parse(localStorage.getItem("users") || "[]");
+
+      const registeredUser = users.find(
         (user) =>
-          user.email === formik.values.email &&
-          user.password === formik.values.password,
+          user.email.toLowerCase() === values.email.toLowerCase() &&
+          user.password === values.password,
       );
+
       if (!registeredUser) {
         setFieldError("password", "Invalid email or password");
         return;
       }
-      saveCurrentUser(registeredUser);
-      dispatch(login(registeredUser));
+
+      const user = {
+        ...registeredUser,
+        role: "user",
+      };
+
+      dispatch(login(user));
       navigate("/");
-      console.log("User login", values);
     },
   });
 
   return (
     <div className="min-h-screen bg-gray-950 text-white flex items-center justify-center px-5 py-10">
       <div className="w-full max-w-md">
-        {/* Logo */}
         <div className="text-center mb-8">
           <Link to="/" className="text-3xl font-bold text-white no-underline">
             CineTrack

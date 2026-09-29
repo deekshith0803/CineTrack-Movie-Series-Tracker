@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 import MovieCard from "../../../components/movie/MovieCard/MovieCard";
 
 const Home = () => {
   const [movies, setMovies] = useState([]);
   const [bannerMovie, setBannerMovie] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const watchlist = useSelector((state) => state.watchlist?.items || []);
+  const favorites = useSelector((state) => state.favorites?.items || []);
+  const watching = useSelector((state) => state.watching?.items || []);
+
+  const moviesWatchedCount = watching.filter((i) => i.type !== "Series" && !i.first_air_date).length;
+  const seriesWatchedCount = watching.filter((i) => i.type === "Series" || i.first_air_date).length;
 
   const API_KEY = import.meta.env.VITE_TMDB_API_KEY;
 
@@ -119,14 +127,14 @@ const Home = () => {
                   to="/watchlist"
                   className="px-5 py-3 rounded-lg bg-red-600 text-white font-semibold no-underline transition hover:bg-red-700"
                 >
-                  View Watchlist
+                  View Watchlist ({watchlist.length})
                 </Link>
 
                 <Link
                   to="/favorites"
                   className="px-5 py-3 rounded-lg border border-gray-600 text-gray-200 font-semibold no-underline transition hover:bg-white/10"
                 >
-                  My Favorites
+                  My Favorites ({favorites.length})
                 </Link>
               </div>
             </div>
@@ -134,9 +142,7 @@ const Home = () => {
         </div>
       </section>
 
-      {/* =====================================================
-          STATS
-      ===================================================== */}
+
 
       <section className="px-5 sm:px-8 lg:px-12 py-8">
         <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -144,28 +150,28 @@ const Home = () => {
           <div className="p-5 rounded-xl bg-gray-900 border border-gray-800">
             <p className="text-gray-500 text-sm">Movies Watched</p>
 
-            <h2 className="text-3xl font-bold mt-2">24</h2>
+            <h2 className="text-3xl font-bold mt-2">{moviesWatchedCount}</h2>
           </div>
 
           {/* Series */}
           <div className="p-5 rounded-xl bg-gray-900 border border-gray-800">
             <p className="text-gray-500 text-sm">Series Watched</p>
 
-            <h2 className="text-3xl font-bold mt-2">12</h2>
+            <h2 className="text-3xl font-bold mt-2">{seriesWatchedCount}</h2>
           </div>
 
           {/* Watchlist */}
           <div className="p-5 rounded-xl bg-gray-900 border border-gray-800">
             <p className="text-gray-500 text-sm">Watchlist</p>
 
-            <h2 className="text-3xl font-bold mt-2">18</h2>
+            <h2 className="text-3xl font-bold mt-2">{watchlist.length}</h2>
           </div>
 
           {/* Favorites */}
           <div className="p-5 rounded-xl bg-gray-900 border border-gray-800">
             <p className="text-gray-500 text-sm">Favorites</p>
 
-            <h2 className="text-3xl font-bold mt-2">9</h2>
+            <h2 className="text-3xl font-bold mt-2">{favorites.length}</h2>
           </div>
         </div>
       </section>

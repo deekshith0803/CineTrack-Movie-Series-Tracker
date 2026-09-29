@@ -19,32 +19,13 @@ import Completed from "./pages/user/Completed/Completed";
 import { useDispatch } from "react-redux";
 import { getCurrentUser } from "./utils/authStorage";
 import { finishLoading, login } from "./redux/slices/authSlice";
+import UserLayout from "./layouts/UserLayout/UserLayout";
+import NotFound from "./pages/NotFound/NotFound";
+import AdminLayout from "./layouts/AdminLayout/AdminLayout";
+import Dashboard from "./pages/admin/Dashboard/Dashboard";
+import AdminRoute from "./routes/AdminRoute";
+import AdminProfile from "./pages/admin/AdminProfile/AdminProfile";
 
-const Layout = ({ children }) => {
-  const location = useLocation();
-
-  const isAuthPage =
-    location.pathname === "/login" || location.pathname === "/register";
-
-  // Login and Register don't show Navbar/Sidebar/Footer
-  if (isAuthPage) {
-    return children;
-  }
-
-  return (
-    <div className="min-h-screen bg-gray-950">
-      <Navbar />
-
-      <div className="flex min-h-[calc(100vh-80px)]">
-        <Sidebar />
-
-        <main className="flex-1 min-w-0">{children}</main>
-      </div>
-
-      <Footer />
-    </div>
-  );
-};
 
 const App = () => {
   const dispatch = useDispatch();
@@ -59,112 +40,65 @@ const App = () => {
   }, [dispatch]);
   return (
     <BrowserRouter>
-      <Layout>
-        <Routes>
-          {/* Authentication */}
-          <Route path="/login" element={<Login />} />
+      <Routes>
 
-          <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
 
-          {/* Home */}
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            }
-          />
+        <Route path="/register" element={<Register />} />
 
-          <Route
-            path="/movies"
-            element={
-              <ProtectedRoute>
-                <MovieList />
-              </ProtectedRoute>
-            }
-          />
+        {/* Admin routes */}
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminLayout />
+            </AdminRoute>
+          }
+        >
+          <Route path="dashboard" element={<Dashboard />} />
+          <Route path="profile" element={<AdminProfile />} />
+        </Route>
 
-          <Route
-            path="/movie/:id"
-            element={
-              <ProtectedRoute>
-                <MovieDetails />
-              </ProtectedRoute>
-            }
-          />
+        {/* user routes */}
+        <Route
+          element={
+            <ProtectedRoute>
+              <UserLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="/" element={<Home />} />
 
-          <Route
-            path="/watchlist"
-            element={
-              <ProtectedRoute>
-                <Watchlist />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/movies" element={<MovieList />} />
 
-          <Route
-            path="/favorites"
-            element={
-              <ProtectedRoute>
-                <Favorites />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/movie/:id" element={<MovieDetails />} />
 
-          <Route
-            path="/profile"
-            element={
-              <ProtectedRoute>
-                <Profile />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/series" element={<SeriesList />} />
 
-          <Route
-            path="/series"
-            element={
-              <ProtectedRoute>
-                <SeriesList />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/series/:id"
-            element={
-              <ProtectedRoute>
-                <SeriesDetails />
-              </ProtectedRoute>
-            }
-          />
+          <Route path="/series/:id" element={<SeriesDetails />} />
+
+          <Route path="/watchlist" element={<Watchlist />} />
+
+          <Route path="/favorites" element={<Favorites />} />
+
           <Route
             path="/currently-watching"
-            element={
-              <ProtectedRoute>
-                <CurrentlyWatching />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/completed"
-            element={
-              <ProtectedRoute>
-                <Completed />
-              </ProtectedRoute>
-            }
+            element={<CurrentlyWatching />}
           />
 
-          {/* 404 */}
-          <Route
-            path="*"
-            element={
-              <div className="min-h-screen bg-gray-950 text-white flex items-center justify-center">
-                <h1 className="text-3xl font-bold">404 - Page Not Found</h1>
-              </div>
-            }
-          />
-        </Routes>
-      </Layout>
+          <Route path="/completed" element={<Completed />} />
+
+          <Route path="/profile" element={<Profile />} />
+        </Route>
+
+        {/* 404 */}
+        <Route
+          path="*"
+          element={
+            <NotFound />
+          }
+        />
+      </Routes>
     </BrowserRouter>
   );
 };
